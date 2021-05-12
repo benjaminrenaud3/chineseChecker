@@ -8,6 +8,8 @@ interface Dot {
   x: number;
   y: number;
   color: string;
+  selected?: boolean;
+  isMovableHere?: boolean;
 }
 const spots: Dot[] = [
   //bottom
@@ -34,69 +36,69 @@ const spots: Dot[] = [
   { x: -9, y: 1, color: "green" },
 
   //middle
-  { x: -7, y: 1, color: "white" },
-  { x: -5, y: 3, color: "white" },
-  { x: -4, y: 4, color: "white" },
-  { x: -6, y: 2, color: "white" },
-  { x: -2, y: 4, color: "white" },
-  { x: -4, y: 2, color: "white" },
-  { x: -2, y: 2, color: "white" },
-  { x: 0, y: 2, color: "white" },
-  { x: 0, y: 4, color: "white" },
-  { x: 2, y: 4, color: "white" },
-  { x: 4, y: 4, color: "white" },
-  { x: -3, y: 3, color: "white" },
-  { x: -1, y: 3, color: "white" },
-  { x: 1, y: 3, color: "white" },
-  { x: 3, y: 3, color: "white" },
-  { x: 5, y: 3, color: "white" },
-  { x: 2, y: 2, color: "white" },
-  { x: 4, y: 2, color: "white" },
-  { x: 6, y: 2, color: "white" },
-  { x: -5, y: 1, color: "white" },
-  { x: -3, y: 1, color: "white" },
-  { x: -1, y: 1, color: "white" },
-  { x: 1, y: 1, color: "white" },
-  { x: 3, y: 1, color: "white" },
-  { x: 5, y: 1, color: "white" },
-  { x: 7, y: 1, color: "white" },
-  { x: -8, y: 0, color: "white" },
-  { x: -6, y: 0, color: "white" },
-  { x: -4, y: 0, color: "white" },
-  { x: -2, y: 0, color: "white" },
-  { x: 0, y: 0, color: "white" },
-  { x: 2, y: 0, color: "white" },
-  { x: 4, y: 0, color: "white" },
-  { x: 6, y: 0, color: "white" },
-  { x: 8, y: 0, color: "white" },
-  { x: -7, y: -1, color: "white" },
-  { x: -5, y: -1, color: "white" },
-  { x: -3, y: -1, color: "white" },
-  { x: -1, y: -1, color: "white" },
-  { x: 1, y: -1, color: "white" },
-  { x: 3, y: -1, color: "white" },
-  { x: 5, y: -1, color: "white" },
-  { x: 7, y: -1, color: "white" },
-  { x: -6, y: -2, color: "white" },
-  { x: -4, y: -2, color: "white" },
-  { x: -2, y: -2, color: "white" },
-  { x: 0, y: -2, color: "white" },
-  { x: 2, y: -2, color: "white" },
-  { x: 4, y: -2, color: "white" },
-  { x: 6, y: -2, color: "white" },
-  { x: -5, y: -3, color: "white" },
-  { x: -3, y: -3, color: "white" },
-  { x: -1, y: -3, color: "white" },
-  { x: 1, y: -3, color: "white" },
-  { x: 3, y: -3, color: "white" },
-  { x: 5, y: -3, color: "white" },
+  { x: -7, y: 1, color: "lightgrey" },
+  { x: -5, y: 3, color: "lightgrey" },
+  { x: -4, y: 4, color: "lightgrey" },
+  { x: -6, y: 2, color: "lightgrey" },
+  { x: -2, y: 4, color: "lightgrey" },
+  { x: -4, y: 2, color: "lightgrey" },
+  { x: -2, y: 2, color: "lightgrey" },
+  { x: 0, y: 2, color: "lightgrey" },
+  { x: 0, y: 4, color: "lightgrey" },
+  { x: 2, y: 4, color: "lightgrey" },
+  { x: 4, y: 4, color: "lightgrey" },
+  { x: -3, y: 3, color: "lightgrey" },
+  { x: -1, y: 3, color: "lightgrey" },
+  { x: 1, y: 3, color: "lightgrey" },
+  { x: 3, y: 3, color: "lightgrey" },
+  { x: 5, y: 3, color: "lightgrey" },
+  { x: 2, y: 2, color: "lightgrey" },
+  { x: 4, y: 2, color: "lightgrey" },
+  { x: 6, y: 2, color: "lightgrey" },
+  { x: -5, y: 1, color: "lightgrey" },
+  { x: -3, y: 1, color: "lightgrey" },
+  { x: -1, y: 1, color: "lightgrey" },
+  { x: 1, y: 1, color: "lightgrey" },
+  { x: 3, y: 1, color: "lightgrey" },
+  { x: 5, y: 1, color: "lightgrey" },
+  { x: 7, y: 1, color: "lightgrey", isMovableHere: false },
+  { x: -8, y: 0, color: "lightgrey", isMovableHere: true },
+  { x: -6, y: 0, color: "lightgrey", selected: true },
+  { x: -4, y: 0, color: "lightgrey", isMovableHere: true },
+  { x: -2, y: 0, color: "lightgrey" },
+  { x: 0, y: 0, color: "lightgrey" },
+  { x: 2, y: 0, color: "lightgrey" },
+  { x: 4, y: 0, color: "lightgrey" },
+  { x: 6, y: 0, color: "lightgrey" },
+  { x: 8, y: 0, color: "lightgrey" },
+  { x: -7, y: -1, color: "lightgrey" },
+  { x: -5, y: -1, color: "lightgrey" },
+  { x: -3, y: -1, color: "lightgrey" },
+  { x: -1, y: -1, color: "lightgrey" },
+  { x: 1, y: -1, color: "lightgrey" },
+  { x: 3, y: -1, color: "lightgrey" },
+  { x: 5, y: -1, color: "lightgrey" },
+  { x: 7, y: -1, color: "lightgrey" },
+  { x: -6, y: -2, color: "lightgrey" },
+  { x: -4, y: -2, color: "lightgrey" },
+  { x: -2, y: -2, color: "lightgrey" },
+  { x: 0, y: -2, color: "lightgrey" },
+  { x: 2, y: -2, color: "lightgrey" },
+  { x: 4, y: -2, color: "lightgrey" },
+  { x: 6, y: -2, color: "lightgrey" },
+  { x: -5, y: -3, color: "lightgrey" },
+  { x: -3, y: -3, color: "lightgrey" },
+  { x: -1, y: -3, color: "lightgrey" },
+  { x: 1, y: -3, color: "lightgrey" },
+  { x: 3, y: -3, color: "lightgrey" },
+  { x: 5, y: -3, color: "lightgrey" },
 
-  { x: -4, y: -4, color: "white" },
-  { x: -2, y: -4, color: "white" },
-  { x: 0, y: -4, color: "white" },
-  { x: 2, y: -4, color: "white" },
+  { x: -4, y: -4, color: "lightgrey" },
+  { x: -2, y: -4, color: "lightgrey" },
+  { x: 0, y: -4, color: "lightgrey" },
+  { x: 2, y: -4, color: "lightgrey" },
 
-  { x: 4, y: -4, color: "white" },
+  { x: 4, y: -4, color: "lightgrey" },
   //right bottom corner
   { x: 6, y: 4, color: "blue" },
   { x: 8, y: 4, color: "blue" },
@@ -109,7 +111,7 @@ const spots: Dot[] = [
   { x: 8, y: 2, color: "blue" },
   { x: 10, y: 2, color: "blue" },
 
-//top right corner
+  //top right corner
   { x: 9, y: -1, color: "orange" },
   { x: 8, y: -2, color: "orange" },
   { x: 10, y: -2, color: "orange" },
@@ -133,13 +135,8 @@ const spots: Dot[] = [
   { x: -8, y: -4, color: "brown" },
   { x: -6, y: -4, color: "brown" },
   { x: -6, y: -4, color: "brown" },
-  
 
-
-
-
-
-  //top 
+  //top
   { x: 0, y: -8, color: "pink" },
   { x: -1, y: -7, color: "pink" },
   { x: 1, y: -7, color: "pink" },
@@ -180,7 +177,7 @@ const App = () => (
       padding: 0,
     }}
   >
-    <svg viewBox="0 0 32 36" style={{ background: "#000" }}>
+    <svg viewBox="0 0 32 36" style={{ width: "80%" }}>
       <polygon
         points={outierPoints}
         stroke="black"
@@ -190,13 +187,23 @@ const App = () => (
       />
       {spots.map((points, index) => {
         return (
-          <Circle
-            key={index}
-            x={points.x}
-            y={points.y}
-            scale={scale}
-            color={points.color}
-          />
+          // eslint-disable-next-line
+          <a
+            onClick={() => {
+              console.log(points);
+            }}
+          >
+            {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
+            <Circle
+              key={index}
+              x={points.x}
+              y={points.y}
+              scale={scale}
+              color={points.color}
+              selected={points.selected}
+              isMovableHere={points.isMovableHere}
+            />
+          </a>
         );
       })}
     </svg>
