@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Player } from '../../models/entities/player.entity';
 import { JwtPayload } from '../../models/strategies/jwt.payload';
 import { JwtToken } from '../../models/strategies/jwt.token';
-import { APP_CONFIG } from 'src/config/app.config';
+import { APP_CONFIG } from '../../config/app.config';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
