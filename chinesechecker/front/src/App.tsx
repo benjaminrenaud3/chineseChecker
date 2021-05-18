@@ -1,16 +1,19 @@
 import React from "react";
 import Circle from "./Circle";
 
+import {getAllowMoveForDot} from "./Algo"
+
 const r = Math.sqrt(3);
 const scale = 1;
 
-interface Dot {
+export interface Dot {
   x: number;
   y: number;
   color: string;
   selected?: boolean;
   isMovableHere?: boolean;
 }
+
 const spots: Dot[] = [
   //bottom
   { x: 0, y: 8, color: "red" },
@@ -61,10 +64,10 @@ const spots: Dot[] = [
   { x: 1, y: 1, color: "lightgrey" },
   { x: 3, y: 1, color: "lightgrey" },
   { x: 5, y: 1, color: "lightgrey" },
-  { x: 7, y: 1, color: "lightgrey", isMovableHere: false },
-  { x: -8, y: 0, color: "lightgrey", isMovableHere: true },
-  { x: -6, y: 0, color: "lightgrey", selected: true },
-  { x: -4, y: 0, color: "lightgrey", isMovableHere: true },
+  { x: 7, y: 1, color: "lightgrey" },
+  { x: -8, y: 0, color: "lightgrey" },
+  { x: -6, y: 0, color: "lightgrey" },
+  { x: -4, y: 0, color: "lightgrey" },
   { x: -2, y: 0, color: "lightgrey" },
   { x: 0, y: 0, color: "lightgrey" },
   { x: 2, y: 0, color: "lightgrey" },
@@ -190,7 +193,8 @@ const App = () => (
           // eslint-disable-next-line
           <a
             onClick={() => {
-              console.log(points);
+              console.log(points)
+              console.log(getAllowMoveForDot(points, spots));
             }}
           >
             {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
