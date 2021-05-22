@@ -1,4 +1,4 @@
-import {Dot} from "./App"
+import {Dot} from "./Game"
 
 
 function getDotWithCoord(x: number, y: number, spots:Dot[]) {
