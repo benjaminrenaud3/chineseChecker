@@ -6,6 +6,6 @@ export class Game {
     @PrimaryGeneratedColumn()
     id?: number
 
-    @OneToMany(type => Player, player => player.id)
+    @OneToMany(type => Player, player => player.game)
     player?: Player[];
 }
