@@ -64,6 +64,10 @@ function getAllowMoveForDot(dot: Dot, spots: Dot[]) {
     let vToExit = 0
 
     checkAllowMoveForDot(vToCheckFirstTime, arrayAllowMove, dot, spots, vToExit)
+    
+    for( var i = 0; i < arrayAllowMove.length; i++)
+        if ( arrayAllowMove[i].x === dot.x && arrayAllowMove[i].y === dot.y)
+            arrayAllowMove.splice(i, 1); 
     return(arrayAllowMove)
 }
 

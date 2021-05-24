@@ -14,7 +14,7 @@ export interface Dot {
   isMovableHere?: boolean;
 }
 
-const spots: Dot[] = [
+const spot: Dot[] = [
   //bottom
   { x: 0, y: 8, color: "red" },
   { x: -1, y: 7, color: "red" },
@@ -68,14 +68,14 @@ const spots: Dot[] = [
   { x: -8, y: 0, color: "lightgrey" },
   { x: -6, y: 0, color: "lightgrey" },
   { x: -4, y: 0, color: "lightgrey" },
-  { x: -2, y: 0, color: "lightgrey" },
+  { x: -2, y: 0, color: "red" },
   { x: 0, y: 0, color: "lightgrey" },
   { x: 2, y: 0, color: "lightgrey" },
   { x: 4, y: 0, color: "lightgrey" },
   { x: 6, y: 0, color: "lightgrey" },
   { x: 8, y: 0, color: "lightgrey" },
   { x: -7, y: -1, color: "lightgrey" },
-  { x: -5, y: -1, color: "lightgrey" },
+  { x: -5, y: -1, color: "red" },
   { x: -3, y: -1, color: "lightgrey" },
   { x: -1, y: -1, color: "lightgrey" },
   { x: 1, y: -1, color: "lightgrey" },
@@ -83,9 +83,9 @@ const spots: Dot[] = [
   { x: 5, y: -1, color: "lightgrey" },
   { x: 7, y: -1, color: "lightgrey" },
   { x: -6, y: -2, color: "lightgrey" },
-  { x: -4, y: -2, color: "lightgrey" },
+  { x: -4, y: -2, color: "red" },
   { x: -2, y: -2, color: "lightgrey" },
-  { x: 0, y: -2, color: "lightgrey" },
+  { x: 0, y: -2, color: "red" },
   { x: 2, y: -2, color: "lightgrey" },
   { x: 4, y: -2, color: "lightgrey" },
   { x: 6, y: -2, color: "lightgrey" },
@@ -167,11 +167,29 @@ const outier = [
   [-4 - 1, 4 * r + 1.4],
 ];
 
+function changeColor (nspots:Dot[], point:Dot) {
+  let tab: Dot[] = spot
+
+  tab.forEach(p => {
+    (p.x === point.x && p.y === point.y) ? p.selected = true : p.selected = false;
+  })
+
+  tab.forEach(p => {
+    (nspots.find(element => element.x === p.x && element.y === p.y)) ? (p.isMovableHere = true) && (console.log(p.x, p.y)) : p.isMovableHere = false;
+  })
+  
+  return(tab)
+}
+
 const outierPoints = outier
   .map((o) => [o[0] + 16, o[1] + 18])
   .reduce((x, y) => x + " " + y, "");
 
-const App = () => (
+const App = () => {
+
+  const [spots, setSpots] = React.useState<Dot[]>(spot)
+
+  return (
   <div
     style={{
       fontFamily: "sans-serif",
@@ -180,6 +198,7 @@ const App = () => (
       padding: 0,
     }}
   >
+
     <svg viewBox="0 0 32 36" style={{ width: "80%" }}>
       <polygon
         points={outierPoints}
@@ -194,7 +213,7 @@ const App = () => (
           <a
             onClick={() => {
               console.log(points)
-              console.log(getAllowMoveForDot(points, spots));
+              setSpots(changeColor(getAllowMoveForDot(points, spots), points))
             }}
           >
             {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
@@ -212,6 +231,6 @@ const App = () => (
       })}
     </svg>
   </div>
-);
+)};
 
 export default App;
