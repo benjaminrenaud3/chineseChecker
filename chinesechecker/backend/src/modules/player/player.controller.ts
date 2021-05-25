@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { coordDto, createPlayerDto, playerLoginDto } from '../../models/player/player.dto';
 import { Player } from '../../models/entities/player.entity';
 import { PlayersService } from './player.service';
 import { JwtToken } from '../../models/strategies/jwt.token';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('player')
 export class PlayerController {
@@ -73,6 +74,7 @@ export class PlayerController {
         }
     }
 
+    //@UseGuards(AuthGuard())
     @Get('coordinates/:playerId')
     @ApiOkResponse({ description: 'Get coordinates for a player' })
     @ApiUnauthorizedResponse({ description: 'Invalid JWT token' })

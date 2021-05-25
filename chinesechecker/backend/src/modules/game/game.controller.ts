@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Game } from '../../models/entities/game.entity';
 import { GameService } from './game.service';
@@ -21,6 +22,7 @@ export class GameController {
         }
     }
 
+    //@UseGuards(AuthGuard())
     @Post()
     @ApiOkResponse({ description: 'create a game' })
     @ApiUnauthorizedResponse({ description: 'Invalid JWT token' })

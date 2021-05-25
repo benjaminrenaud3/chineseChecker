@@ -9,7 +9,6 @@ import { APP_CONFIG } from '../../config/app.config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';   
 import { Dots } from '../../models/entities/dots.entity';
-import { GameService } from '../game/game.service';
 
 @Injectable()
 export class PlayersService {
@@ -17,7 +16,6 @@ export class PlayersService {
         @InjectRepository(Player) public readonly userRepository: Repository<Player>,
         @InjectRepository(Dots) public readonly dotsRepository: Repository<Dots>,
         private jwtService: JwtService,
-        private gameService: GameService
     ) {}
 
     async getAll(): Promise<Player[]> {

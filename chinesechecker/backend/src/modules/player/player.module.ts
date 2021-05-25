@@ -10,18 +10,19 @@ import { Dots } from '../../models/entities/dots.entity';
 import { GameService } from '../game/game.service';
 import { GameModule } from '../game/game.module';
 import { Game } from '../../models/entities/game.entity';
+import { JwtStrategy } from '../../models/strategies/jwt.strategy';
 
 @Module({
   imports: [
   TypeOrmModule.forFeature([Player, Dots, Game]),
-  GameModule,
   PassportModule.register({ defaultStrategy: 'jwt' }),
   JwtModule.register({
     secret: APP_CONFIG.secretKey,
     signOptions: { algorithm: 'HS512', expiresIn: APP_CONFIG.expiresIn },
   }),
   ],
-  providers: [PlayersService, GameService],
-  controllers: [PlayerController]
+  providers: [PlayersService, GameService, JwtStrategy],
+  controllers: [PlayerController],
+  exports: [PassportModule, JwtModule]
 })
 export class PlayersModule {}
