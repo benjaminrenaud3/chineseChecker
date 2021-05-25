@@ -13,9 +13,6 @@ export class Dots {
     @Column({ default: 0 })
     y?: number;
 
-    @Column({ nullable: true })
-    scale?: number;
-
     @Column()
     color?: string;
     
