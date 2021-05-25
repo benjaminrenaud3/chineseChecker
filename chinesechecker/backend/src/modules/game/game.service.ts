@@ -33,7 +33,6 @@ export class GameService {
             playerArray.push(player);
         }
         const game = await this.gameRepository.create({ player: playerArray});
-        console.log(game);
         await this.gameRepository.save(game);
         return game;
     }

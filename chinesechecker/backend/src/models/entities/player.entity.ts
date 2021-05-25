@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Dots } from './dots.entity';
 import { Game } from './game.entity';
 
 @Entity()
@@ -33,4 +34,7 @@ export class Player {
     @ManyToOne(type => Game, game => game.id)
     @JoinColumn()
     game?: Game;
+
+    @OneToMany(type => Dots, dots => dots.player)
+    dots?: Dots[];
 }

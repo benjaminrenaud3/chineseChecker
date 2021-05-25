@@ -60,14 +60,14 @@ export class PlayerController {
         }
     }
 
-    @Put('coordinates/:playerId')
+    @Put('coordinates/:playerId/:gameId')
     @ApiCreatedResponse({ description: 'update coordinates for a player' })
     @ApiUnauthorizedResponse({ description: 'Invalid JWT token' })
     @ApiBody({ type: coordDto })
     @ApiBearerAuth()
-    async updateCoordinates(@Param('playerId') playerId: number, @Body() coords: coordDto): Promise<Player> {
+    async updateCoordinates(@Param('playerId') playerId: number, @Body() coords: coordDto[], @Param('gameId') gameId: number): Promise<Player> {
         try {
-            return await this.playerService.updateCoord(playerId, coords);
+            return await this.playerService.updateCoord(playerId, coords, gameId);
         } catch (err) {
             throw new HttpException(err && err.message, HttpStatus.BAD_REQUEST);
         }

@@ -1,6 +1,7 @@
 import { IsNotEmpty, MinLength } from "class-validator";
 import { Game } from "../entities/game.entity";
 import { ApiProperty } from '@nestjs/swagger';
+import { Dots } from "../entities/dots.entity";
 
 export class createPlayerDto {
     @ApiProperty({ type: Number, description: 'coordinate X', required: false })
@@ -22,6 +23,8 @@ export class createPlayerDto {
     password?: string;
     @ApiProperty({ type: Game, description: 'entity game', required: false })
     game?: Game;
+    @ApiProperty({ type: Dots, description: 'entity dots', required: false })
+    dots?: Dots;
 }
 
 export class playerLoginDto {
@@ -43,4 +46,18 @@ export class coordDto {
     @IsNotEmpty()
     @ApiProperty({ type: Number, description: 'coordY' })
     y?: number;
+
+    @IsNotEmpty()
+    @ApiProperty({ type: String, description: 'color' })
+    color?: string;
+
+    @ApiProperty({ type: Boolean, description: 'isSelected' })
+    isSelected?: boolean;
+
+    @ApiProperty({ type: Boolean, description: 'isMovableHere' })
+    isMovableHere?: boolean;
+
+    @IsNotEmpty()
+    @ApiProperty({ type: Number, description: 'gameId' })
+    gameId?: number;
 }

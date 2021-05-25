@@ -8,12 +8,16 @@ import { JwtToken } from '../../models/strategies/jwt.token';
 import { APP_CONFIG } from '../../config/app.config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';   
+import { Dots } from '../../models/entities/dots.entity';
+import { GameService } from '../game/game.service';
 
 @Injectable()
 export class PlayersService {
     constructor(
         @InjectRepository(Player) public readonly userRepository: Repository<Player>,
-        private jwtService: JwtService
+        @InjectRepository(Dots) public readonly dotsRepository: Repository<Dots>,
+        private jwtService: JwtService,
+        private gameService: GameService
     ) {}
 
     async getAll(): Promise<Player[]> {
@@ -36,8 +40,13 @@ export class PlayersService {
         if (await this.findOneByUsername(player.username)) {
             throw new Error('this username already exist, pleache chose another one');
         }
+        const dotsArray: Dots[] = [];
+        for (var x = 0; x < 10; x++) {
+            dotsArray.push(new Dots());
+        }
         const playerToCreate: Player = {
-            ...player
+            ...player,
+            dots: dotsArray
         };
         playerToCreate.salt = await bcrypt.genSalt();
         playerToCreate.password = await bcrypt.hash(player.password, playerToCreate.salt);
@@ -65,21 +74,47 @@ export class PlayersService {
         return this.findMatchUsernamePwd(player.username, hashedPwd);
     }
 
-    async updateCoord(playerId: number, coord: coordDto): Promise<Player> {
+    async updateCoord(playerId: number, coord: coordDto[], gameId: number): Promise<Player> {
+        var shouldSkip = false;
         const player = await this.userRepository.findOne(playerId);
         if (!player) {
             throw new Error('no player to update');
         }
-        const payload: coordDto = {
-            x: coord.x === undefined ? player.x : coord.x,
-            y: coord.y === undefined ? player.y : coord.y
-        };
-        await this.userRepository.update(playerId, payload);
+        let coordsArray: Dots[] = [];
+        coord.forEach(
+            async (element) => {
+                coordsArray.push(element);
+            }
+        )
+        for (var x = 0; x < coordsArray.length; x++) {
+            coordsArray[x].player = player;
+            coordsArray[x].gameId = gameId;
+        }
+        const coordinates = await this.dotsRepository.find({ where: { player: player } });
+        if (coordinates.length) {
+            let count = 0;
+            coordinates.forEach(
+                async (element) => {
+                    if (gameId == element.gameId) {
+                        var toUpdate = await this.dotsRepository.findOne(element.id);
+                        await this.dotsRepository.remove(toUpdate);      
+                        await this.dotsRepository.save(coordsArray[count++]);
+                    } else {
+                        if (shouldSkip == false) {
+                            shouldSkip = true;
+                            await this.dotsRepository.save(coordsArray);
+                        }
+                    }
+                }
+            );    
+        } else {
+            await this.dotsRepository.save(coordsArray);
+        }
         return await this.userRepository.findOne(playerId);
     }
 
     async getCoords(playerId): Promise<Player> {
-        const player = await this.userRepository.findOne(playerId, { select: ['x', 'y'] });
+        const player = await this.userRepository.findOne(playerId, { relations: ['dots'], select: ['id'] });
         if (!player) {
             throw new Error('no player with this id');
         }
