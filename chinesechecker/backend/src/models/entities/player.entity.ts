@@ -37,4 +37,7 @@ export class Player {
 
     @OneToMany(type => Dots, dots => dots.player)
     dots?: Dots[];
+
+    @Column()
+    socketId?: string;
 }

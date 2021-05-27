@@ -3,7 +3,8 @@ import Circle from "./Circle";
 import { useHistory } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
-import { getAllowMoveForDot } from "./Algo";
+import { getAllowMoveForDot } from "./AlgoMove";
+import { getBestMoveForPlayer } from "./AlgoIA"
 import {
   makeStyles,
   Box,
@@ -11,6 +12,8 @@ import {
   Typography,
   Button,
 } from "@material-ui/core";
+import { io } from "socket.io-client";
+import SocketIOClient from "socket.io-client"
 
 const r = Math.sqrt(3);
 const scale = 1;
@@ -71,11 +74,11 @@ const spots: Dot[] = [
   { x: -2, y: 2, color: "lightgrey" },
   { x: 0, y: 2, color: "lightgrey" },
   { x: 0, y: 4, color: "lightgrey" },
-  { x: 2, y: 4, color: "lightgrey" },
+  { x: 2, y: 4, color: "blue" },
   { x: 4, y: 4, color: "lightgrey" },
   { x: -3, y: 3, color: "lightgrey" },
   { x: -1, y: 3, color: "lightgrey" },
-  { x: 1, y: 3, color: "lightgrey" },
+  { x: 1, y: 3, color: "blue" },
   { x: 3, y: 3, color: "lightgrey" },
   { x: 5, y: 3, color: "lightgrey" },
   { x: 2, y: 2, color: "lightgrey" },
@@ -83,7 +86,7 @@ const spots: Dot[] = [
   { x: 6, y: 2, color: "lightgrey" },
   { x: -5, y: 1, color: "lightgrey" },
   { x: -3, y: 1, color: "lightgrey" },
-  { x: -1, y: 1, color: "lightgrey" },
+  { x: -1, y: 1, color: "blue" },
   { x: 1, y: 1, color: "lightgrey" },
   { x: 3, y: 1, color: "lightgrey" },
   { x: 5, y: 1, color: "lightgrey" },
@@ -93,20 +96,20 @@ const spots: Dot[] = [
   { x: -4, y: 0, color: "lightgrey" },
   { x: -2, y: 0, color: "lightgrey" },
   { x: 0, y: 0, color: "lightgrey" },
-  { x: 2, y: 0, color: "lightgrey" },
+  { x: 2, y: 0, color: "blue" },
   { x: 4, y: 0, color: "lightgrey" },
   { x: 6, y: 0, color: "lightgrey" },
   { x: 8, y: 0, color: "lightgrey" },
   { x: -7, y: -1, color: "lightgrey" },
   { x: -5, y: -1, color: "lightgrey" },
   { x: -3, y: -1, color: "lightgrey" },
-  { x: -1, y: -1, color: "lightgrey" },
+  { x: -1, y: -1, color: "blue" },
   { x: 1, y: -1, color: "lightgrey" },
   { x: 3, y: -1, color: "lightgrey" },
   { x: 5, y: -1, color: "lightgrey" },
   { x: 7, y: -1, color: "lightgrey" },
   { x: -6, y: -2, color: "lightgrey" },
-  { x: -4, y: -2, color: "lightgrey" },
+  { x: -4, y: -2, color: "blue" },
   { x: -2, y: -2, color: "lightgrey" },
   { x: 0, y: -2, color: "lightgrey" },
   { x: 2, y: -2, color: "lightgrey" },
@@ -291,8 +294,18 @@ const Game = () => {
                 // eslint-disable-next-line
                 <a
                   onClick={() => {
-                    console.log(points);
-                    console.log(getAllowMoveForDot(points, spots));
+                    // console.log(points);
+                    // console.log(getAllowMoveForDot(points, spots));
+                    // console.log(getBestMoveForPlayer("brown", spots))
+                    let socket: any
+
+                    socket = io("ws://127.0.0.1:3000/");
+ 
+
+                    socket.on("connect", () => {
+                          console.log("Connected to ws");
+                          socket.emit("authenticate", "");
+                        });
                   }}
                 >
                   {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
