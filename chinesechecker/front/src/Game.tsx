@@ -12,8 +12,7 @@ import {
   Typography,
   Button,
 } from "@material-ui/core";
-import { io } from "socket.io-client";
-import SocketIOClient from "socket.io-client"
+import io from "socket.io-client";
 
 const r = Math.sqrt(3);
 const scale = 1;
@@ -238,12 +237,24 @@ const Game = () => {
 
   const gameId = localStorage.getItem("game");
 
+  let socket: any
+
+  React.useEffect(() => {
+    console.log("init socket")
+    socket = io("ws://127.0.0.1:3000/");
+    socket.on("connect", () => {
+      console.log("Connected to ws");
+      socket.emit("authenticate", "payload");
+    });
+  }, [])
   if (!gameId) {
     enqueueSnackbar("You need to create or join a game.", {
       variant: "error",
     });
     history.push("/login");
   }
+
+
 
   return (
     <Box className={classes.container}>
@@ -297,15 +308,10 @@ const Game = () => {
                     // console.log(points);
                     // console.log(getAllowMoveForDot(points, spots));
                     // console.log(getBestMoveForPlayer("brown", spots))
-                    let socket: any
 
-                    socket = io("ws://127.0.0.1:3000/");
  
 
-                    socket.on("connect", () => {
-                          console.log("Connected to ws");
-                          socket.emit("authenticate", "");
-                        });
+                  
                   }}
                 >
                   {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
