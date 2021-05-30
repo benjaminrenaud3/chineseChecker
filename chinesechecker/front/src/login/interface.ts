@@ -30,3 +30,17 @@ export interface LoginRes {
   expireDate: number;
   player?: Player;
 }
+
+export interface coordDto {
+  x?: number;
+
+  y?: number;
+
+  color?: string;
+
+  isSelected?: boolean;
+
+  isMovableHere?: boolean;
+
+  gameId?: number;
+}

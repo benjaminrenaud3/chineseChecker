@@ -3,7 +3,10 @@ import Circle from "./Circle";
 import { useHistory } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
-import { getAllowMoveForDot } from "algo/AlgoMove";
+import { coordDto } from './login/interface';
+
+
+// import { getAllowMoveForDot } from "algo/AlgoMove";
 
 import { getBestMoveForPlayer } from "./algo/AlgoIA"
 import {
@@ -39,6 +42,89 @@ const playerList: player[] = [
   { name: "Thomas", color: "red", score: 12 },
   { name: "Thomas", color: "red", score: 12 },
 ];
+
+const redDot: coordDto[] = [
+  { x: 0, y: 8, color: "red" },
+  { x: -1, y: 7, color: "red" },
+  { x: 1, y: 7, color: "red" },
+  { x: -2, y: 6, color: "red" },
+  { x: 0, y: 6, color: "red" },
+  { x: 2, y: 6, color: "red" },
+  { x: -3, y: 5, color: "red" },
+  { x: -1, y: 5, color: "red" },
+  { x: 1, y: 5, color: "red" },
+  { x: 3, y: 5, color: "red" },
+]
+
+const greenDot: coordDto[] = [
+  { x: -12, y: 4, color: "green" },
+  { x: -10, y: 4, color: "green" },
+  { x: -8, y: 4, color: "green" },
+  { x: -6, y: 4, color: "green" },
+  { x: -11, y: 3, color: "green" },
+  { x: -7, y: 3, color: "green" },
+  { x: -10, y: 2, color: "green" },
+  { x: -8, y: 2, color: "green" },
+  { x: -9, y: 3, color: "green" },
+  { x: -9, y: 1, color: "green" },
+]
+
+const blueDot: coordDto[] = [
+  { x: 6, y: 4, color: "blue" },
+  { x: 8, y: 4, color: "blue" },
+  { x: 10, y: 4, color: "blue" },
+  { x: 12, y: 4, color: "blue" },
+  { x: 7, y: 3, color: "blue" },
+  { x: 9, y: 3, color: "blue" },
+  { x: 11, y: 3, color: "blue" },
+  { x: 9, y: 1, color: "blue" },
+  { x: 8, y: 2, color: "blue" },
+  { x: 10, y: 2, color: "blue" },
+]
+
+const orangeDot: coordDto[] = [
+
+{ x: 9, y: -1, color: "orange" },
+{ x: 8, y: -2, color: "orange" },
+{ x: 10, y: -2, color: "orange" },
+{ x: 6, y: -4, color: "orange" },
+{ x: 8, y: -4, color: "orange" },
+{ x: 10, y: -4, color: "orange" },
+{ x: 12, y: -4, color: "orange" },
+{ x: 7, y: -3, color: "orange" },
+{ x: 9, y: -3, color: "orange" },
+{ x: 11, y: -3, color: "orange" },
+]
+
+const brownDot: coordDto[] = [
+
+//top left corner
+{ x: -10, y: -2, color: "brown" },
+{ x: -8, y: -2, color: "brown" },
+{ x: -9, y: -1, color: "brown" },
+{ x: -11, y: -3, color: "brown" },
+{ x: -9, y: -3, color: "brown" },
+{ x: -7, y: -3, color: "brown" },
+{ x: -12, y: -4, color: "brown" },
+{ x: -10, y: -4, color: "brown" },
+{ x: -8, y: -4, color: "brown" },
+{ x: -6, y: -4, color: "brown" },
+{ x: -6, y: -4, color: "brown" },
+]
+
+const pinkDot: coordDto[] = [
+//top
+{ x: 0, y: -8, color: "pink" },
+{ x: -1, y: -7, color: "pink" },
+{ x: 1, y: -7, color: "pink" },
+{ x: -2, y: -6, color: "pink" },
+{ x: 0, y: -6, color: "pink" },
+{ x: 2, y: -6, color: "pink" },
+{ x: -3, y: -5, color: "pink" },
+{ x: -1, y: -5, color: "pink" },
+{ x: 1, y: -5, color: "pink" },
+{ x: 3, y: -5, color: "pink" },
+]
 
 const spots: Dot[] = [
   //bottom
@@ -238,6 +324,7 @@ const Game = () => {
 
   const gameId = localStorage.getItem("game");
   const jwt = localStorage.getItem("jwt");
+  const playerId = localStorage.getItem("playerId");
   let socket: any
 
   React.useEffect(() => {
@@ -245,11 +332,22 @@ const Game = () => {
     socket = io("ws://127.0.0.1:3000/");
     socket.on("connect", () => {
       console.log("Connected to ws");
-      socket.emit("authenticate", "payload");
-      socket.emit("setGame", spots);
-      socket.emit("getGame", "payload");
-      socket.emit("authenticate", jwt);
+      // socket.emit("authenticate", jwt);
+      socket.emit("setPlayerCoord", jwt)
+
     });
+
+
+
+    // socket.emit("setPlayerCoord", playerId, redDot, gameId)
+    // socket.emit("setPlayerCoord", playerId, greenDot, gameId)
+    // socket.emit("setPlayerCoord", playerId, blueDot, gameId)
+    // socket.emit("setPlayerCoord", playerId, pinkDot, gameId)
+    // socket.emit("setPlayerCoord", playerId, orangeDot, gameId)
+    // socket.emit("setPlayerCoord", playerId, brownDot, gameId)
+
+    socket.emit("getGame", gameId)
+    socket.on("sendGame", (game) => console.log(game))
   }, [])
   if (!gameId) {
     enqueueSnackbar("You need to create or join a game.", {
@@ -317,7 +415,7 @@ const Game = () => {
                 <a
                   onClick={() => {
                     // console.log(points);
-                    console.log(getAllowMoveForDot(points, spots));
+                    // console.log(getAllowMoveForDot(points, spots));
                     // console.log(getBestMoveForPlayer("brown", spots))
 
  

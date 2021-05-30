@@ -59,10 +59,11 @@ import {
         console.log("auth is good")
     }
 
-    @SubscribeMessage('setGame')
-    async setGame(playerId: number, coord: coordDto[], gameId: number): Promise<any> {
+    @SubscribeMessage('setPlayerCoord')
+    async setPlayerCoord(client: Socket, payload: string): Promise<void> {
     // verifier token et injecter le numero de la socket en db
-      let a = await this.playerService.updateCoord(playerId, coord, gameId)
+      console.log("payload")
+      // let a = await this.playerService.updateCoord(playerId, coord, gameId)
     }
 
   

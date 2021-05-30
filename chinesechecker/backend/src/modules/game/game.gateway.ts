@@ -60,7 +60,7 @@ import {
     @SubscribeMessage('getGame')
     async getGame(client: Socket, GameId: number): Promise<any> {
       let a = await this.gameService.getAllPlayersGame(GameId)
-      Socket.emit(a)
+      client.emit("sendGame", a)
     }
 
   

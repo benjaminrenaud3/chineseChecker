@@ -16,10 +16,10 @@ export class Dots {
     @Column()
     color?: string;
     
-    @Column()
+    @Column({ default: false })
     isSelected?: boolean;
 
-    @Column()
+    @Column({ default: false })
     isMovableHere?: boolean;
 
     @Column()
