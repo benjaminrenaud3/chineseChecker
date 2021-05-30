@@ -7,6 +7,8 @@ import {
   TextField,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
+import { Game } from "./interface";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -30,26 +32,73 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const prepareGame = async (history: any) => {
-  const data = { gameId: "12" };
-  localStorage.setItem("game", data.gameId);
+const prepareGame = async (history: any, enqueueSnackbar : Function) => {
+  const playerId = localStorage.getItem("playerId");
+  const jwt = localStorage.getItem("jwt");
+
+  const res = await fetch(`http://localhost:3000/game`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${jwt}`,
+    },
+    body: JSON.stringify({
+      playerId: [playerId],
+    }),
+  });
+
+  if (res.status !== 201) {
+    const error = await res.json();
+    enqueueSnackbar(error.message, {
+      variant: "error",
+    });
+    return;
+  }
+  const data: Game = await res.json();
+
+  localStorage.setItem("game", String(data.id));
 
   history.push("/game");
 };
 
-const joinGame = async (history: any, gameid: string) => {
+const joinGame = async (history: any, gameid: string, enqueueSnackbar: Function) => {
+  localStorage.setItem("game", gameid);
 
-    // const data = { gameId: "12" };
-    localStorage.setItem("game", gameid);
-  
-    history.push("/game");
-}
+  const playerId = localStorage.getItem("playerId");
+  const jwt = localStorage.getItem("jwt");
+
+  const res = await fetch(
+    `http://localhost:3000/game/join/${gameid}/${playerId}`,
+    {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${jwt}`,
+      },
+    }
+  );
+
+  if (res.status !== 200) {
+    const error = await res.json();
+    enqueueSnackbar(error.message, {
+      variant: "error",
+    });
+    return;
+  }
+
+  const data: Game = await res.json();
+
+  localStorage.setItem("game", String(data.id));
+
+  history.push("/game");
+};
 
 const CreateOrJoin = () => {
   const [step, setStep] = React.useState<0 | 1>(0);
   const [gameInput, setGameInput] = React.useState<string>("");
   const classes = useStyles();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -63,7 +112,7 @@ const CreateOrJoin = () => {
                 color="primary"
                 className={classes.button}
                 onClick={() => {
-                  prepareGame(history);
+                  prepareGame(history, enqueueSnackbar);
                 }}
               >
                 Create
@@ -99,16 +148,16 @@ const CreateOrJoin = () => {
               value={gameInput}
               variant="outlined"
             />
-                   <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                    joinGame(history, gameInput)
-                }}
-              >
-                Join
-              </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                joinGame(history, gameInput, enqueueSnackbar);
+              }}
+            >
+              Join
+            </Button>
           </Box>
         )}
       </div>
