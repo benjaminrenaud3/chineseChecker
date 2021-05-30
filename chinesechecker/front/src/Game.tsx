@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack";
 import { coordDto } from './login/interface';
 
 
-// import { getAllowMoveForDot } from "algo/AlgoMove";
+import { getAllowMoveForDot } from "algo/AlgoMove";
 
 import { getBestMoveForPlayer } from "./algo/AlgoIA"
 import {
@@ -17,6 +17,7 @@ import {
   Button,
 } from "@material-ui/core";
 import io from "socket.io-client";
+import { RepeatRounded } from "@material-ui/icons";
 
 const r = Math.sqrt(3);
 const scale = 1;
@@ -332,19 +333,15 @@ const Game = () => {
     socket = io("ws://127.0.0.1:3000/");
     socket.on("connect", () => {
       console.log("Connected to ws");
-      // socket.emit("authenticate", jwt);
-      socket.emit("setPlayerCoord", jwt)
-
+      socket.emit("authenticate", jwt);
     });
 
-
-
-    // socket.emit("setPlayerCoord", playerId, redDot, gameId)
-    // socket.emit("setPlayerCoord", playerId, greenDot, gameId)
-    // socket.emit("setPlayerCoord", playerId, blueDot, gameId)
-    // socket.emit("setPlayerCoord", playerId, pinkDot, gameId)
-    // socket.emit("setPlayerCoord", playerId, orangeDot, gameId)
-    // socket.emit("setPlayerCoord", playerId, brownDot, gameId)
+    socket.emit("setPlayerCoord", [playerId, redDot, gameId])
+    // socket.emit("setPlayerCoord", [playerId+1, greenDot, gameId])
+    // socket.emit("setPlayerCoord", [playerId, blueDot, gameId])
+    // socket.emit("setPlayerCoord", [playerId, pinkDot, gameId])
+    // socket.emit("setPlayerCoord", [playerId, orangeDot, gameId])
+    // socket.emit("setPlayerCoord", [playerId, brownDot, gameId])
 
     socket.emit("getGame", gameId)
     socket.on("sendGame", (game) => console.log(game))
@@ -413,15 +410,20 @@ const Game = () => {
               return (
                 // eslint-disable-next-line
                 <a
-                  onClick={() => {
-                    // console.log(points);
-                    // console.log(getAllowMoveForDot(points, spots));
-                    // console.log(getBestMoveForPlayer("brown", spots))
-
- 
-
-                  
-                  }}
+                //   onClick={() => {
+                //     getAllowMoveForDot(points, spots).map((endPoint, index) => {
+                //       return (
+                //         <a
+                //         onClick={() => {
+                //             socket.emit("changeDotPos", [playerId, gameId, points, endPoint])
+                //             points.color = "lightgrey"
+                //           }
+                //         }
+                //         >
+                //       )
+                //     })
+                //   }
+                // }  
                 >
                   {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
                   <Circle

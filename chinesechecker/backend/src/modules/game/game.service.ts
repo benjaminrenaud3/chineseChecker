@@ -4,12 +4,16 @@ import { createGameDto } from '../../models/game/game.dto';
 import { Repository } from 'typeorm';
 import { Game } from '../../models/entities/game.entity';
 import { Player } from '../../models/entities/player.entity';
+import { Dots } from '../../models/entities/dots.entity';
+
 
 @Injectable()
 export class GameService {
     constructor(
         @InjectRepository(Game) public readonly gameRepository: Repository<Game>,
         @InjectRepository(Player) public readonly playerRepository: Repository<Player>,
+        @InjectRepository(Dots) public readonly dotsRepository: Repository<Dots>,
+
     ) {}
 
     async getAll(): Promise<Game[]> {
@@ -82,9 +86,34 @@ export class GameService {
 
     async getAllPlayersGame(gameId: number): Promise<Game> {
         const game = await this.gameRepository.findOne(gameId, { relations: ['player'] });
+        const dots = await this.dotsRepository.find({where: {gameId:9}})
+
+
+        console.log(gameId, dots)
+
         if (!game) {
             throw new Error('no game to show with this id');
         }
         return game;
+    }
+
+    async getAllDotsGame(gameId: number): Promise<Dots[]> {
+        const dots = await this.dotsRepository.find({where: {gameId:9}})
+        // console.log(gameId, dots)
+
+        if (!dots) {
+            throw new Error('no dots in game to show with this id');
+        }
+        return dots;
+    }
+
+    async getPlayerDotsGame(gameId: number, playerId): Promise<Dots[]> {
+        const dots = await this.dotsRepository.find({where: {gameId:gameId, playerId:playerId}})
+        // console.log(gameId, dots)
+
+        if (!dots) {
+            throw new Error('no dots in game to show with this id');
+        }
+        return dots;
     }
 }
