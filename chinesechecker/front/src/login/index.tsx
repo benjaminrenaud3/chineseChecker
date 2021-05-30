@@ -7,7 +7,7 @@ import Register from "./Register";
 const LoginIndex = () => {
   const [step, setStep] = React.useState<1 | 2 | 3>(1);
 
-  return (
+  return (  
     <Box>
       {step === 1 && <Login setStep={setStep}/>}
       {step === 2 && <Register setStep={setStep}/>}

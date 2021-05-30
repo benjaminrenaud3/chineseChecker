@@ -236,7 +236,7 @@ const Game = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const gameId = localStorage.getItem("game");
-
+  const jwt = localStorage.getItem("jwt");
   let socket: any
 
   React.useEffect(() => {
@@ -244,11 +244,18 @@ const Game = () => {
     socket = io("ws://127.0.0.1:3000/");
     socket.on("connect", () => {
       console.log("Connected to ws");
-      socket.emit("authenticate", "payload");
+      socket.emit("authenticate", jwt);
     });
   }, [])
   if (!gameId) {
     enqueueSnackbar("You need to create or join a game.", {
+      variant: "error",
+    });
+    history.push("/login");
+  }
+
+  if (!jwt) {
+    enqueueSnackbar("you must be connected", {
       variant: "error",
     });
     history.push("/login");

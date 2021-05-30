@@ -12,6 +12,7 @@ import { Formik } from "formik";
 import { useSnackbar } from "notistack";
 import * as Yup from "yup";
 import { Box } from "@material-ui/core";
+import { LoginRes } from "./interface";
 
 interface Props {
   setStep: Function;
@@ -43,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const Login = ({ setStep }: Props) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -74,12 +74,37 @@ const Login = ({ setStep }: Props) => {
             { resetForm, setErrors, setStatus, setSubmitting }
           ) => {
             try {
+              console.log("login")
+              const res = await fetch(`http://localhost:3000/player/login`, {
+                method: "POST",
+                headers: {
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: values.login,
+                  password: values.password,
+                }),
+              });
+              console.log(res.status)
+              if (res.status !== 201) {
+                setStatus({ success: false });
+                const error = await res.json();
+                enqueueSnackbar(error.message, {
+                  variant: "error",
+                });
+                return;
+              }
+
               setStatus({ success: true });
               enqueueSnackbar("Login successed", {
                 variant: "success",
               });
 
-              setStep(3)
+              const loginRes: LoginRes = await res.json();
+              localStorage.setItem("jwt", loginRes.token);
+              localStorage.setItem("playerId", String(loginRes.player.id));
+
+              setStep(3);
             } catch (error) {
               setStatus({ success: false });
               setErrors(error.message);

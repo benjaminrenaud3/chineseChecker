@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import AccountCircle from "@material-ui/icons/AccountCircle"
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -73,11 +73,33 @@ const Register = ({ setStep }: Props) => {
             { resetForm, setErrors, setStatus, setSubmitting }
           ) => {
             try {
+              console.log("submit")
+              const res = await fetch(`http://localhost:3000/player`, {
+                method: "POST",
+                headers: {
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: values.login,
+                  password: values.password,
+                }),
+              });
+              console.log(res.status)
+              if (res.status !== 201) {
+                setStatus({ success: false });
+                const error = await res.json();
+                enqueueSnackbar(error.message, {
+                  variant: "error",
+                });
+                return;
+              }
+
               setStatus({ success: true });
               enqueueSnackbar("Register successed", {
                 variant: "success",
               });
-              setStep(3);
+
+              setStep(1);
             } catch (error) {
               setStatus({ success: false });
               setErrors(error.message);
@@ -111,6 +133,8 @@ const Register = ({ setStep }: Props) => {
                   variant="outlined"
                 />
 
+                {console.log(errors)}
+
                 <TextField
                   className={classes.input}
                   error={Boolean(touched.password && errors.password)}
@@ -133,7 +157,7 @@ const Register = ({ setStep }: Props) => {
                   color="primary"
                   className={classes.submit}
                 >
-                  Sign In
+                  Sign Up
                 </Button>
                 <Grid container>
                   <Grid item xs>
