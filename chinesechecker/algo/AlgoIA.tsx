@@ -1,5 +1,5 @@
-import {Dot} from "./Game"
-import {getAllowMoveForDot} from "./AlgoMove"
+import {getAllowMoveForDot, Dot} from "./AlgoMove"
+
 
 
 function getDotWithCoord(x: number, y: number, spots:Dot[]) {

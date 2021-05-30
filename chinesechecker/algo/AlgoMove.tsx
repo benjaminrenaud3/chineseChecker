@@ -1,4 +1,11 @@
-import {Dot} from "./Game"
+
+export interface Dot {
+    x: number;
+    y: number;
+    color: string;
+    selected?: boolean;
+    isMovableHere?: boolean;
+  }
 
 
 function getDotWithCoord(x: number, y: number, spots:Dot[]) {

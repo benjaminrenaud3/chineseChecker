@@ -3,8 +3,9 @@ import Circle from "./Circle";
 import { useHistory } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
-import { getAllowMoveForDot } from "./AlgoMove";
-import { getBestMoveForPlayer } from "./AlgoIA"
+import { getAllowMoveForDot } from "algo/AlgoMove";
+
+import { getBestMoveForPlayer } from "./algo/AlgoIA"
 import {
   makeStyles,
   Box,
@@ -245,6 +246,8 @@ const Game = () => {
     socket.on("connect", () => {
       console.log("Connected to ws");
       socket.emit("authenticate", "payload");
+      socket.emit("setGame", spots);
+      socket.emit("getGame", "payload");
     });
   }, [])
   if (!gameId) {
@@ -306,7 +309,7 @@ const Game = () => {
                 <a
                   onClick={() => {
                     // console.log(points);
-                    // console.log(getAllowMoveForDot(points, spots));
+                    console.log(getAllowMoveForDot(points, spots));
                     // console.log(getBestMoveForPlayer("brown", spots))
 
  

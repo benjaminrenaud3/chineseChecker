@@ -15,9 +15,11 @@ import {
   } from '@nestjs/websockets';
   import { exception } from 'console';
   import { Server, Socket } from 'socket.io';
-  import { GameService } from './game.service';
-  import { GameController } from './game.controller'
+  import { PlayersService } from './player.service';
+  import { PlayerController } from './player.controller'
   import { Game } from '../../models/entities/game.entity';
+  import { coordDto, createPlayerDto, playerLoginDto } from '../../models/player/player.dto';
+
 
 
   
@@ -36,11 +38,11 @@ import {
   
   @Injectable()
   @WebSocketGateway()
-  export class GameGateway
+  export class PlayerGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
         
     constructor(
-      private readonly gameService: GameService,
+      private readonly playerService: PlayersService,
     ) {    }
   
     private connected: Boolean = false;
@@ -57,10 +59,10 @@ import {
         console.log("auth is good")
     }
 
-    @SubscribeMessage('getGame')
-    async getGame(client: Socket, GameId: number): Promise<any> {
-      let a = await this.gameService.getAllPlayersGame(GameId)
-      Socket.emit(a)
+    @SubscribeMessage('setGame')
+    async setGame(playerId: number, coord: coordDto[], gameId: number): Promise<any> {
+    // verifier token et injecter le numero de la socket en db
+      let a = await this.playerService.updateCoord(playerId, coord, gameId)
     }
 
   
