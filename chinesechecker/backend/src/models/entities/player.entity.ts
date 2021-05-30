@@ -38,6 +38,6 @@ export class Player {
     @OneToMany(type => Dots, dots => dots.player)
     dots?: Dots[];
 
-    @Column()
+    @Column({nullable: true})
     socketId?: string;
 }
