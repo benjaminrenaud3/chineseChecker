@@ -61,9 +61,15 @@ import {
         console.log("auth is good")
     }
 
+    @SubscribeMessage('getDotGame')
+    async getDotGame(client: Socket, GameId: number): Promise<any> {
+      let a = await this.gameService.getAllDotsGame(GameId)
+      client.emit("sendGame", a)
+    }
+
     @SubscribeMessage('getGame')
     async getGame(client: Socket, GameId: number): Promise<any> {
-      let a = await this.gameService.getAllDotsGame(GameId)
+      let a = await this.gameService.getAllPlayersGame(GameId)
       client.emit("sendGame", a)
     }
 
