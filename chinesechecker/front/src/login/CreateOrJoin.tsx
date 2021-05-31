@@ -6,7 +6,7 @@ import {
   Button,
   TextField,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Game } from "./interface";
 import { useSnackbar } from "notistack";
 
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const prepareGame = async (history: any, enqueueSnackbar : Function) => {
+const prepareGame = async (history: any, enqueueSnackbar: Function) => {
   const playerId = localStorage.getItem("playerId");
   const jwt = localStorage.getItem("jwt");
 
@@ -61,7 +61,11 @@ const prepareGame = async (history: any, enqueueSnackbar : Function) => {
   history.push("/game");
 };
 
-const joinGame = async (history: any, gameid: string, enqueueSnackbar: Function) => {
+const joinGame = async (
+  history: any,
+  gameid: string,
+  enqueueSnackbar: Function
+) => {
   localStorage.setItem("game", gameid);
 
   const playerId = localStorage.getItem("playerId");
@@ -99,7 +103,15 @@ const CreateOrJoin = () => {
   const classes = useStyles();
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
+  const location = useLocation();
 
+  const searchTearms = location.search.split("=");
+
+  console.log(searchTearms);
+  if (searchTearms && searchTearms[0] === "?gameId" && searchTearms[1]) {
+    joinGame(history, searchTearms[1], enqueueSnackbar);
+    return null;
+  }
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>

@@ -1,284 +1,15 @@
 import React from "react";
 import Circle from "./Circle";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSnackbar } from "notistack";
-
-import { coordDto } from './login/interface';
-
-
-import { getAllowMoveForDot } from "algo/AlgoMove";
-
-import { getBestMoveForPlayer } from "./algo/AlgoIA"
-import {
-  makeStyles,
-  Box,
-  Grid,
-  Typography,
-  Button,
-} from "@material-ui/core";
+import { coordDto } from "./login/interface";
+import { getAllowMoveForDot } from "./algo/AlgoMove";
+import { getBestMoveForPlayer } from "./algo/AlgoIA";
+import { makeStyles, Box, Grid, Typography, Button } from "@material-ui/core";
 import io from "socket.io-client";
 import { RepeatRounded } from "@material-ui/icons";
-
-const r = Math.sqrt(3);
-const scale = 1;
-
-export interface Dot {
-  x: number;
-  y: number;
-  color: string;
-  selected?: boolean;
-  isMovableHere?: boolean;
-}
-
-interface player {
-  name: string;
-  color: string;
-  score: number;
-}
-
-const playerList: player[] = [
-  { name: "Thomas", color: "red", score: 12 },
-  { name: "Thomas", color: "red", score: 12 },
-  { name: "Thomas", color: "red", score: 12 },
-  { name: "Thomas", color: "red", score: 12 },
-  { name: "Thomas", color: "red", score: 12 },
-];
-
-const redDot: coordDto[] = [
-  { x: 0, y: 8, color: "red" },
-  { x: -1, y: 7, color: "red" },
-  { x: 1, y: 7, color: "red" },
-  { x: -2, y: 6, color: "red" },
-  { x: 0, y: 6, color: "red" },
-  { x: 2, y: 6, color: "red" },
-  { x: -3, y: 5, color: "red" },
-  { x: -1, y: 5, color: "red" },
-  { x: 1, y: 5, color: "red" },
-  { x: 3, y: 5, color: "red" },
-]
-
-const greenDot: coordDto[] = [
-  { x: -12, y: 4, color: "green" },
-  { x: -10, y: 4, color: "green" },
-  { x: -8, y: 4, color: "green" },
-  { x: -6, y: 4, color: "green" },
-  { x: -11, y: 3, color: "green" },
-  { x: -7, y: 3, color: "green" },
-  { x: -10, y: 2, color: "green" },
-  { x: -8, y: 2, color: "green" },
-  { x: -9, y: 3, color: "green" },
-  { x: -9, y: 1, color: "green" },
-]
-
-const blueDot: coordDto[] = [
-  { x: 6, y: 4, color: "blue" },
-  { x: 8, y: 4, color: "blue" },
-  { x: 10, y: 4, color: "blue" },
-  { x: 12, y: 4, color: "blue" },
-  { x: 7, y: 3, color: "blue" },
-  { x: 9, y: 3, color: "blue" },
-  { x: 11, y: 3, color: "blue" },
-  { x: 9, y: 1, color: "blue" },
-  { x: 8, y: 2, color: "blue" },
-  { x: 10, y: 2, color: "blue" },
-]
-
-const orangeDot: coordDto[] = [
-
-{ x: 9, y: -1, color: "orange" },
-{ x: 8, y: -2, color: "orange" },
-{ x: 10, y: -2, color: "orange" },
-{ x: 6, y: -4, color: "orange" },
-{ x: 8, y: -4, color: "orange" },
-{ x: 10, y: -4, color: "orange" },
-{ x: 12, y: -4, color: "orange" },
-{ x: 7, y: -3, color: "orange" },
-{ x: 9, y: -3, color: "orange" },
-{ x: 11, y: -3, color: "orange" },
-]
-
-const brownDot: coordDto[] = [
-
-//top left corner
-{ x: -10, y: -2, color: "brown" },
-{ x: -8, y: -2, color: "brown" },
-{ x: -9, y: -1, color: "brown" },
-{ x: -11, y: -3, color: "brown" },
-{ x: -9, y: -3, color: "brown" },
-{ x: -7, y: -3, color: "brown" },
-{ x: -12, y: -4, color: "brown" },
-{ x: -10, y: -4, color: "brown" },
-{ x: -8, y: -4, color: "brown" },
-{ x: -6, y: -4, color: "brown" },
-{ x: -6, y: -4, color: "brown" },
-]
-
-const pinkDot: coordDto[] = [
-//top
-{ x: 0, y: -8, color: "pink" },
-{ x: -1, y: -7, color: "pink" },
-{ x: 1, y: -7, color: "pink" },
-{ x: -2, y: -6, color: "pink" },
-{ x: 0, y: -6, color: "pink" },
-{ x: 2, y: -6, color: "pink" },
-{ x: -3, y: -5, color: "pink" },
-{ x: -1, y: -5, color: "pink" },
-{ x: 1, y: -5, color: "pink" },
-{ x: 3, y: -5, color: "pink" },
-]
-
-const spots: Dot[] = [
-  //bottom
-  { x: 0, y: 8, color: "red" },
-  { x: -1, y: 7, color: "red" },
-  { x: 1, y: 7, color: "red" },
-  { x: -2, y: 6, color: "red" },
-  { x: 0, y: 6, color: "red" },
-  { x: 2, y: 6, color: "red" },
-  { x: -3, y: 5, color: "red" },
-  { x: -1, y: 5, color: "red" },
-  { x: 1, y: 5, color: "red" },
-  { x: 3, y: 5, color: "red" },
-  // left bot corner
-  { x: -12, y: 4, color: "green" },
-  { x: -10, y: 4, color: "green" },
-  { x: -8, y: 4, color: "green" },
-  { x: -6, y: 4, color: "green" },
-  { x: -11, y: 3, color: "green" },
-  { x: -7, y: 3, color: "green" },
-  { x: -10, y: 2, color: "green" },
-  { x: -8, y: 2, color: "green" },
-  { x: -9, y: 3, color: "green" },
-  { x: -9, y: 1, color: "green" },
-
-  //middle
-  { x: -7, y: 1, color: "lightgrey" },
-  { x: -5, y: 3, color: "lightgrey" },
-  { x: -4, y: 4, color: "lightgrey" },
-  { x: -6, y: 2, color: "lightgrey" },
-  { x: -2, y: 4, color: "lightgrey" },
-  { x: -4, y: 2, color: "lightgrey" },
-  { x: -2, y: 2, color: "lightgrey" },
-  { x: 0, y: 2, color: "lightgrey" },
-  { x: 0, y: 4, color: "lightgrey" },
-  { x: 2, y: 4, color: "blue" },
-  { x: 4, y: 4, color: "lightgrey" },
-  { x: -3, y: 3, color: "lightgrey" },
-  { x: -1, y: 3, color: "lightgrey" },
-  { x: 1, y: 3, color: "blue" },
-  { x: 3, y: 3, color: "lightgrey" },
-  { x: 5, y: 3, color: "lightgrey" },
-  { x: 2, y: 2, color: "lightgrey" },
-  { x: 4, y: 2, color: "lightgrey" },
-  { x: 6, y: 2, color: "lightgrey" },
-  { x: -5, y: 1, color: "lightgrey" },
-  { x: -3, y: 1, color: "lightgrey" },
-  { x: -1, y: 1, color: "blue" },
-  { x: 1, y: 1, color: "lightgrey" },
-  { x: 3, y: 1, color: "lightgrey" },
-  { x: 5, y: 1, color: "lightgrey" },
-  { x: 7, y: 1, color: "lightgrey" },
-  { x: -8, y: 0, color: "lightgrey" },
-  { x: -6, y: 0, color: "lightgrey" },
-  { x: -4, y: 0, color: "lightgrey" },
-  { x: -2, y: 0, color: "lightgrey" },
-  { x: 0, y: 0, color: "lightgrey" },
-  { x: 2, y: 0, color: "blue" },
-  { x: 4, y: 0, color: "lightgrey" },
-  { x: 6, y: 0, color: "lightgrey" },
-  { x: 8, y: 0, color: "lightgrey" },
-  { x: -7, y: -1, color: "lightgrey" },
-  { x: -5, y: -1, color: "lightgrey" },
-  { x: -3, y: -1, color: "lightgrey" },
-  { x: -1, y: -1, color: "blue" },
-  { x: 1, y: -1, color: "lightgrey" },
-  { x: 3, y: -1, color: "lightgrey" },
-  { x: 5, y: -1, color: "lightgrey" },
-  { x: 7, y: -1, color: "lightgrey" },
-  { x: -6, y: -2, color: "lightgrey" },
-  { x: -4, y: -2, color: "blue" },
-  { x: -2, y: -2, color: "lightgrey" },
-  { x: 0, y: -2, color: "lightgrey" },
-  { x: 2, y: -2, color: "lightgrey" },
-  { x: 4, y: -2, color: "lightgrey" },
-  { x: 6, y: -2, color: "lightgrey" },
-  { x: -5, y: -3, color: "lightgrey" },
-  { x: -3, y: -3, color: "lightgrey" },
-  { x: -1, y: -3, color: "lightgrey" },
-  { x: 1, y: -3, color: "lightgrey" },
-  { x: 3, y: -3, color: "lightgrey" },
-  { x: 5, y: -3, color: "lightgrey" },
-
-  { x: -4, y: -4, color: "lightgrey" },
-  { x: -2, y: -4, color: "lightgrey" },
-  { x: 0, y: -4, color: "lightgrey" },
-  { x: 2, y: -4, color: "lightgrey" },
-
-  { x: 4, y: -4, color: "lightgrey" },
-  //right bottom corner
-  { x: 6, y: 4, color: "blue" },
-  { x: 8, y: 4, color: "blue" },
-  { x: 10, y: 4, color: "blue" },
-  { x: 12, y: 4, color: "blue" },
-  { x: 7, y: 3, color: "blue" },
-  { x: 9, y: 3, color: "blue" },
-  { x: 11, y: 3, color: "blue" },
-  { x: 9, y: 1, color: "blue" },
-  { x: 8, y: 2, color: "blue" },
-  { x: 10, y: 2, color: "blue" },
-
-  //top right corner
-  { x: 9, y: -1, color: "orange" },
-  { x: 8, y: -2, color: "orange" },
-  { x: 10, y: -2, color: "orange" },
-  { x: 6, y: -4, color: "orange" },
-  { x: 8, y: -4, color: "orange" },
-  { x: 10, y: -4, color: "orange" },
-  { x: 12, y: -4, color: "orange" },
-  { x: 7, y: -3, color: "orange" },
-  { x: 9, y: -3, color: "orange" },
-  { x: 11, y: -3, color: "orange" },
-
-  //top left corner
-  { x: -10, y: -2, color: "brown" },
-  { x: -8, y: -2, color: "brown" },
-  { x: -9, y: -1, color: "brown" },
-  { x: -11, y: -3, color: "brown" },
-  { x: -9, y: -3, color: "brown" },
-  { x: -7, y: -3, color: "brown" },
-  { x: -12, y: -4, color: "brown" },
-  { x: -10, y: -4, color: "brown" },
-  { x: -8, y: -4, color: "brown" },
-  { x: -6, y: -4, color: "brown" },
-  { x: -6, y: -4, color: "brown" },
-
-  //top
-  { x: 0, y: -8, color: "pink" },
-  { x: -1, y: -7, color: "pink" },
-  { x: 1, y: -7, color: "pink" },
-  { x: -2, y: -6, color: "pink" },
-  { x: 0, y: -6, color: "pink" },
-  { x: 2, y: -6, color: "pink" },
-  { x: -3, y: -5, color: "pink" },
-  { x: -1, y: -5, color: "pink" },
-  { x: 1, y: -5, color: "pink" },
-  { x: 3, y: -5, color: "pink" },
-];
-
-const outier = [
-  [0, 8 * r + 2.6],
-  [4 + 0.8, 4 * r + 1.4],
-  [12 + 2.4, 4 * r + 1.4],
-  [8 + 1.6, 0],
-  [12 + 2.4, -4 * r - 1.4],
-  [4 + 0.8, -4 * r - 1.4],
-  [0, -8 * r - 2.6],
-  [-4 - 0.8, -4 * r - 1.4],
-  [-12 - 2.4, -4 * r - 1.4],
-  [-8 - 1.6, 0],
-  [-12 - 2.4, 4 * r + 1.4],
-  [-4 - 1, 4 * r + 1.4],
-];
+import { outier, redDot, playerList, spots, Dot } from "./gameConst";
+import { useInterval } from "./Hooks/SetInterval";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -314,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const scale = 1;
+
 const outierPoints = outier
   .map((o) => [o[0] + 16, o[1] + 18])
   .reduce((x, y) => x + " " + y, "");
@@ -322,30 +55,31 @@ const Game = () => {
   const history = useHistory();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const location = useLocation();
 
   const gameId = localStorage.getItem("game");
   const jwt = localStorage.getItem("jwt");
   const playerId = localStorage.getItem("playerId");
-  let socket: any
+  let socket: any;
+  const [gameSpot, setGameSpot] = React.useState<Dot[]>(spots);
+  const [reload, setReload] = React.useState<any>(false);
+
+  let lastSelected;
+  socket = io("ws://127.0.0.1:3000/");
 
   React.useEffect(() => {
-    console.log("init socket")
-    socket = io("ws://127.0.0.1:3000/");
+    console.log("init socket");
     socket.on("connect", () => {
       console.log("Connected to ws");
       socket.emit("authenticate", jwt);
     });
 
-    socket.emit("setPlayerCoord", [playerId, redDot, gameId])
-    // socket.emit("setPlayerCoord", [playerId+1, greenDot, gameId])
-    // socket.emit("setPlayerCoord", [playerId, blueDot, gameId])
-    // socket.emit("setPlayerCoord", [playerId, pinkDot, gameId])
-    // socket.emit("setPlayerCoord", [playerId, orangeDot, gameId])
-    // socket.emit("setPlayerCoord", [playerId, brownDot, gameId])
+    socket.emit("setPlayerCoord", [playerId, redDot, gameId]);
 
-    socket.emit("getGame", gameId)
-    socket.on("sendGame", (game) => console.log(game))
-  }, [])
+    socket.emit("getGame", gameId);
+    socket.on("sendGame", (game) => console.log(game));
+  }, []);
+
   if (!gameId) {
     enqueueSnackbar("You need to create or join a game.", {
       variant: "error",
@@ -361,7 +95,10 @@ const Game = () => {
   }
 
 
-
+  //   getGame (gameId) : toute les info players
+  // getDotGame (gameId) : tout les dots
+  // setPlayerCoord ([playerId, redDot, gameId])
+  // changeDotPos ([playerId, gameId, dotStart, dotEnd])
   return (
     <Box className={classes.container}>
       <Grid item xs={2}>
@@ -392,6 +129,27 @@ const Game = () => {
           variant="contained"
           color="primary"
           className={classes.submit}
+          onClick={() => {
+            const actualLocation = window.location.href.slice(
+              0,
+              window.location.href.length - 4
+            );
+            enqueueSnackbar("Copied to clipboard", {
+              variant: "success",
+            });
+            navigator.clipboard.writeText(
+              `${actualLocation}login?gameId=${gameId}`
+            );
+          }}
+        >
+          Share the game
+        </Button>
+
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
         >
           Launch the game
         </Button>
@@ -406,24 +164,40 @@ const Game = () => {
               fill="transparent"
               strokeLinejoin="round"
             />
-            {spots.map((points, index) => {
+            {gameSpot.map((points, index) => {
               return (
                 // eslint-disable-next-line
                 <a
-                //   onClick={() => {
-                //     getAllowMoveForDot(points, spots).map((endPoint, index) => {
-                //       return (
-                //         <a
-                //         onClick={() => {
-                //             socket.emit("changeDotPos", [playerId, gameId, points, endPoint])
-                //             points.color = "lightgrey"
-                //           }
-                //         }
-                //         >
-                //       )
-                //     })
-                //   }
-                // }  
+                  onClick={() => {
+                    console.log(points);
+                    if (points.isMovableHere) {
+                      console.log(lastSelected);
+                      console.log("send changeDotPos");
+                      socket.emit("changeDotPos", [
+                        playerId,
+                        gameId,
+                        lastSelected,
+                        points,
+                      ]);
+                    } else {
+                      const res = getAllowMoveForDot(points, gameSpot);
+
+                      let tmp = gameSpot;
+
+                      res.forEach((e) => {
+                        tmp.forEach((t) => {
+                          if (t.x === e.x && t.y === e.y) {
+                            console.log("change");
+                            t.color = "black";
+                            t.isMovableHere = true;
+                          } else t.isMovableHere = false;
+                        });
+                      });
+                      setGameSpot(tmp);
+                      setReload(Math.floor(Math.random() * 100000));
+                    }
+                    lastSelected = points;
+                  }}
                 >
                   {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}
                   <Circle

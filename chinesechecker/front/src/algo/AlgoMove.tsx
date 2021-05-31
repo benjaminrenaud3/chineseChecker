@@ -64,7 +64,7 @@ function checkAllowMoveForDot(vToCheckFirstTime: boolean, arrayAllowMove:Dot[], 
             checkAllowMoveForDot(false, arrayAllowMove, getDotWithCoord(dot.x+4, dot.y, spots), spots, vToExit+1)}
 
 
-function getAllowMoveForDot(dot: Dot, spots: Dot[]) {
+function getAllowMoveForDot(dot: Dot, spots: Dot[]) : Dot[] {
 
     let arrayAllowMove = []
     let vToCheckFirstTime = true
