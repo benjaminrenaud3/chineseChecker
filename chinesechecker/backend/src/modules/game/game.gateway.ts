@@ -20,6 +20,7 @@ import {
   import { GameController } from './game.controller'
   import { Game } from '../../models/entities/game.entity';
   import { Dots } from '../../models/entities/dots.entity';
+  import { greySpots } from '../../../../front/src/gameConst'
 
 
 
@@ -64,7 +65,22 @@ import {
     @SubscribeMessage('getDotGame')
     async getDotGame(client: Socket, GameId: number): Promise<any> {
       let a = await this.gameService.getAllDotsGame(GameId)
-      client.emit("sendGame", a)
+      let b = greySpots
+
+      b.map(elem => {elem.color = "lightgrey"})
+
+      a.map(element => {
+        b.map(toFind => {
+          (element.x === toFind.x && element.y === toFind.y) ? toFind.color = element.color : ""
+          // if (toFind.color === "red")
+            // console.log("RED")
+        })
+        // console.log("------------------")
+      })
+
+      // console.log(a)
+
+      client.emit("sendDotGame", b)
     }
 
     @SubscribeMessage('getGame')
@@ -86,15 +102,13 @@ import {
       let dotEnd : Dot = payload[3]
       let playerDot : Dots[] = await this.gameService.getPlayerDotsGame(payload[0], payload[1])
 
-      console.log(playerDot, dotStart, dotEnd)
+      // console.log(dotStart, dotEnd)
 
       playerDot.map((element) => {
         (element.x === dotStart.x && element.y === dotStart.y) ? (element.x = dotEnd.x, element.y = dotEnd.y) : ""
       })
 
-      console.log(payload[1])
-
-      let a = await this.playersService.updateCoord(payload[0], playerDot, payload[2])
+      let a = await this.playersService.updateCoord(payload[0], playerDot, payload[1])
     }
 
   

@@ -63,8 +63,16 @@ const Game = () => {
   let socket: any;
   const [gameSpot, setGameSpot] = React.useState<Dot[]>(spots);
   const [reload, setReload] = React.useState<any>(false);
+  const [lastSelected, setLastSelected] = React.useState<Dot>();
 
-  let lastSelected;
+
+
+  function updateGame() {
+    socket.emit("getDotGame", gameId);
+    socket.on("sendDotGame", (game) => game ? (setGameSpot(game), console.log("game trouvé")) : setGameSpot(spots), console.log("empty"));
+  }
+
+  // let lastSelected;
   socket = io("ws://127.0.0.1:3000/");
 
   React.useEffect(() => {
@@ -76,8 +84,13 @@ const Game = () => {
 
     socket.emit("setPlayerCoord", [playerId, redDot, gameId]);
 
-    socket.emit("getGame", gameId);
-    socket.on("sendGame", (game) => console.log(game));
+    // socket.emit("getGame", gameId);
+    // socket.on("sendGame", (game) => console.log(game));
+
+    socket.emit("getDotGame", gameId);
+    socket.on("sendDotGame", (game) => game ? (setGameSpot(game), console.log("game trouvé")) : setGameSpot(spots), console.log("empty"));
+
+    
   }, []);
 
   if (!gameId) {
@@ -153,6 +166,19 @@ const Game = () => {
         >
           Launch the game
         </Button>
+
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          onClick={() => {
+            updateGame()
+          }}
+        >
+          Update
+        </Button>
+
       </Grid>
       <Grid item xs={10}>
         <Box className={classes.svgContainer}>
@@ -179,7 +205,10 @@ const Game = () => {
                         lastSelected,
                         points,
                       ]);
-                    } else {
+
+                        // socket.emit("getDotGame");
+                        // socket.on("sendDotGame", (game) => game ? setGameSpot(game) : setGameSpot(spots));
+                    } else if (points.color != "lightgrey") {
                       const res = getAllowMoveForDot(points, gameSpot);
 
                       let tmp = gameSpot;
@@ -190,13 +219,14 @@ const Game = () => {
                             console.log("change");
                             t.color = "black";
                             t.isMovableHere = true;
-                          } else t.isMovableHere = false;
+                          } ;
                         });
                       });
                       setGameSpot(tmp);
                       setReload(Math.floor(Math.random() * 100000));
+                      setLastSelected(points);
+                      console.log("last selected = ", lastSelected)
                     }
-                    lastSelected = points;
                   }}
                 >
                   {/*  can't put a div in an polygon. eslint disabled to avoid useless warning */}

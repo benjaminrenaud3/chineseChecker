@@ -73,6 +73,7 @@ export class PlayersService {
     }
 
     async updateCoord(playerId: number, coord: coordDto[], gameId: number): Promise<Player> {
+        // console.log(coord)
         var shouldSkip = false;
         const player = await this.userRepository.findOne(playerId);
         if (!player) {
@@ -88,6 +89,9 @@ export class PlayersService {
             coordsArray[x].player = player;
             coordsArray[x].gameId = gameId;
         }
+
+        // console.log(coordsArray)
+
         const coordinates = await this.dotsRepository.find({ where: { player: player } });
         if (coordinates.length) {
             let count = 0;
@@ -97,7 +101,8 @@ export class PlayersService {
                         var toUpdate = await this.dotsRepository.findOne(element.id);
                         await this.dotsRepository.remove(toUpdate);      
                         await this.dotsRepository.save(coordsArray[count++]);
-                    } else {
+                    }
+                    else {
                         if (shouldSkip == false) {
                             shouldSkip = true;
                             await this.dotsRepository.save(coordsArray);

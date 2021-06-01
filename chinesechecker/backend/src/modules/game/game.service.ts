@@ -89,7 +89,7 @@ export class GameService {
         const dots = await this.dotsRepository.find({where: {gameId:9}})
 
 
-        console.log(gameId, dots)
+        // console.log(gameId, dots)
 
         if (!game) {
             throw new Error('no game to show with this id');
@@ -98,7 +98,7 @@ export class GameService {
     }
 
     async getAllDotsGame(gameId: number): Promise<Dots[]> {
-        const dots = await this.dotsRepository.find({where: {gameId:9}})
+        const dots = await this.dotsRepository.find({where: {gameId:gameId}})
         // console.log(gameId, dots)
 
         if (!dots) {
@@ -107,9 +107,10 @@ export class GameService {
         return dots;
     }
 
-    async getPlayerDotsGame(gameId: number, playerId): Promise<Dots[]> {
-        const dots = await this.dotsRepository.find({where: {gameId:gameId, playerId:playerId}})
-        // console.log(gameId, dots)
+    async getPlayerDotsGame(playerId: number, gameId: number): Promise<Dots[]> {
+        // console.log(gameId, playerId)
+
+        const dots = await this.dotsRepository.find({where: {gameId:gameId, player:playerId}})
 
         if (!dots) {
             throw new Error('no dots in game to show with this id');
