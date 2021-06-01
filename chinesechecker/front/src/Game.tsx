@@ -71,13 +71,15 @@ const Game = () => {
   const [gameSpot, setGameSpot] = React.useState<Dot[]>(spots);
   const [reload, setReload] = React.useState<any>(false);
   const [lastSelected, setLastSelected] = React.useState<Dot>();
-
+  const [playerList, setPlayerList] = React.useState<[]>([]);
   function updateGame() {
     socket.emit("getDotGame", gameId);
 
     socket.emit("getGame", gameId);
     socket.on("sendGame", (game) => {
       const gamePlayer = game.player;
+      console.log(gamePlayer)
+
       let moves: any;
       if (gamePlayer.length === 1) {
         moves = getBestMoveForPlayer("green", gameSpot);
@@ -123,6 +125,7 @@ const Game = () => {
         moves = getBestMoveForPlayer("orange", gameSpot);
         socket.emit("changeDotPos", [7, gameId, moves[0], moves[1]]);
       }
+      setPlayerList(gamePlayer)
     });
 
     socket.on(
@@ -198,9 +201,10 @@ const Game = () => {
 
           <Typography variant={"h5"}>Player list</Typography>
           <Box>
-            {playerList.map((e) => (
+            {playerList.map((e: any) => {
+              return (
               <Box className={classes.playerCells}>
-                <Typography>{e.name}</Typography>
+                <Typography>{e.username}</Typography>
 
                 <Box className={classes.playerCellsFlexBox}>
                   <Typography>Color </Typography>
@@ -209,9 +213,8 @@ const Game = () => {
                     style={{ backgroundColor: e.color }}
                   ></Box>
                 </Box>
-                <Typography>score: {e.score}</Typography>
               </Box>
-            ))}
+            )})}
           </Box>
         </Box>
 
